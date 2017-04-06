@@ -10,10 +10,13 @@ function route(handler, request, response)
         return handler[pathname](request, response);
     }
     else{
+        /*
         console.log("no request for " + pathname);
         response.writeHead(404, {'Content-Type':'text/plain'});
         response.write("404 not found");
         response.end();
+        */
+        return handler["file"](request,response);
     }
 }
 
