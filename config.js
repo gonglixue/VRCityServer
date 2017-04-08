@@ -12,5 +12,16 @@ var configItem = {
 var pg_connectStr = "postgres://" + configItem.username + ":" +
     configItem.password + "@" + configItem.address + "/" + configItem.db;
 
+var tileConfig = {
+    boundary:{
+        west: 13.381512759037726,
+        east: 13.401936495408673,
+        south: 52.53244656281135,
+        north: 52.5445093151267
+    },
+    tileCountX:11,
+    tileCountY:11
+}
+
 exports.configItem = configItem;
 exports.pg_connectStr = pg_connectStr;

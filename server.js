@@ -4,7 +4,7 @@
 var http = require("http");
 var url = require("url");
 
-function start(route, handler)
+function start(route, handler, client)
 {
     console.log('start server');
     function onRequest(request, response)

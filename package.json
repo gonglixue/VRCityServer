@@ -4,7 +4,8 @@
   "description": "server for VRCity",
   "main": "index.js",
   "dependencies": {
-    "pg": "^6.1.5"
+    "pg": "^6.1.5",
+    "xmldom": "^0.1.27"
   },
   "devDependencies": {},
   "scripts": {

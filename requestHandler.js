@@ -76,30 +76,7 @@ function downloadTextureFile(request, response)
 {
     var pathname = url.parse(request.url).pathname;
     pathname = pathname.substr(8);
-    // var dirPath = pathname.substring(0, pathname.lastIndexOf('/'));
-    // console.log("dir path:" + dirPath);
 
-    // fs.readdir('.'+pathname, function(err, filesName){
-    //     filesName.forEach(function(filename){
-    //         var postfix = filename.substr(filename.lastIndexOf('.')+1);
-    //         console.log(postfix);
-    //         if(postfix == "jpeg"){
-    //             fs.readFile('.' + dirPath + '/' + filename, "binary", function(error, data){
-    //                 console.log("find a jepg:" + filename);
-    //                 if(error){
-    //                     response.writeHead(500, {'Content-Type':'text/plain'});
-    //                     response.write(error + "\n");
-    //                     response.end();
-    //                 }
-    //                 else{
-    //                     response.writeHead(200, {'Content-Type':'image/jpeg'});
-    //                     response.write(data,"binary");
-    //                     response.end();
-    //                 }
-    //             })
-    //         }
-    //     })
-    // })
     console.log("request texture: " + pathname);
     fs.readFile("." + pathname, "binary", function(error,data){
         if(error){
