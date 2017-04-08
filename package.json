@@ -6,6 +6,7 @@
   "dependencies": {
     "pg": "^6.1.5",
     "xmldom": "^0.1.27"
+	"libxmljs": "^0.18.4"
   },
   "devDependencies": {},
   "scripts": {
