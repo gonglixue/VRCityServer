@@ -1,0 +1,24 @@
+{
+  "name": "vrcityserver",
+  "version": "1.0.0",
+  "description": "server for VRCity",
+  "main": "index.js",
+  "dependencies": {
+    "pg": "^6.1.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gonglixue/VRCityServer.git"
+  },
+  "author": "gonglixue",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gonglixue/VRCityServer/issues"
+  },
+  "homepage": "https://github.com/gonglixue/VRCityServer#readme"
+}

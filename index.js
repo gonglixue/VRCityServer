@@ -10,5 +10,6 @@ handler["/"] = requestHandler.loadKML;
 handler["/loadKML"] = requestHandler.loadKML;
 handler["/loadTileKML"] = requestHandler.loadTileKML
 handler["file"] = requestHandler.downloadFile;
+handler["texture"] = requestHandler.downloadTextureFile;
 
 server.start(router.route, handler);

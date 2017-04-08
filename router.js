@@ -5,6 +5,7 @@ var url = require("url");
 function route(handler, request, response)
 {
     var pathname = url.parse(request.url).pathname;
+    console.log("route pathname: " + pathname);
     if(typeof(handler[pathname]) === "function")
     {
         return handler[pathname](request, response);
@@ -16,7 +17,12 @@ function route(handler, request, response)
         response.write("404 not found");
         response.end();
         */
-        return handler["file"](request,response);
+        if(pathname.startsWith("/texture"))
+        {
+            return handler["texture"](request, response);
+        }
+        else
+            return handler["file"](request,response);
     }
 }
 
