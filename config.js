@@ -20,8 +20,11 @@ var tileConfig = {
         north: 52.5445093151267
     },
     tileCountX:11,
-    tileCountY:11
+    tileCountY:11,
+    tileWidth: 0.0018567033064497646,
+    tileHeight: 0.0010966138468501445
 }
 
 exports.configItem = configItem;
 exports.pg_connectStr = pg_connectStr;
+exports.tileConfig = tileConfig;

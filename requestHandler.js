@@ -4,9 +4,11 @@
 var url = require("url");
 var fs = require("fs");
 var querystring = require("querystring");
+var connectSQL = require("./connectSQL");
 
 // method: GET
 // params: latitude, longitude
+/*
 function loadKML(request, response)
 {
     console.log("request handler: loadKML");
@@ -23,8 +25,24 @@ function loadKML(request, response)
             response.end();
         }
     })
-
 }
+*/
+
+function loadKML(request, response)
+{
+    var doc = connectSQL.genKML();
+    if(doc){
+        response.writeHead(200, {'Content-Type':'text/xml'});
+        response.write(doc);
+        response.end();
+    }
+    else{
+        response.writeHead(500, {'Content-Type':'text/plain'});
+        response.write("error");
+        response.end();
+    }
+}
+
 
 // method: GET
 // params: cityName idX idY

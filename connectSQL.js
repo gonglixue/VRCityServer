@@ -4,6 +4,8 @@
 var pg = require('pg');
 var config = require('./config');
 var xmldom = require('xmldom');
+var fs = require("fs");
+//var libxml = require("libxmljs");
 
 var conString = config.pg_connectStr;
 var client = new pg.Client(conString);
@@ -65,10 +67,102 @@ function genKML(){
     </Document>\n\
     </kml>'
 
-    var doc = new xmldom.DOMParser().parseFromString(basicStructureXML);
+    var parser = new xmldom.DOMParser();
+    var XMLS = new xmldom.XMLSerializer();
+    var doc = parser.parseFromString(basicStructureXML, "application/xml");
+    //console.log(XMLS.serializeToString(doc));
 
-    var Flolder = doc.createElement("Folder");
+    var KMLDocument = doc.getElementsByTagName("Document")[0];
 
-    var test = doc.documentElement.getElementsByTagName("range")[0].nodeValue;
-    console.log(test);
+    //console.log(XMLS.serializeToString(doc));
+
+    for(var i=0; i<config.tileConfig.tileCountX; i++){
+        for(var j=0; j<config.tileConfig.tileCountY; j++){
+            // TODO: 构造Folder tile_i_j，插入文档树
+            var FolderObj = {
+                name: "Layer_absolute_Tile_" + i + "_" + j,
+                south:config.tileConfig.boundary.south + config.tileConfig.tileHeight*i,
+                north:config.tileConfig.boundary.south + config.tileConfig.tileHeight*(i+1),
+                west:config.tileConfig.boundary.west + config.tileConfig.tileWidth*j,
+                east:config.tileConfig.boundary.west + config.tileConfig.tileWidth*(j+1),
+                href:"Tiles/"+i+"/"+j+"/"+"Layer_absolute_Tile_"+i+"_"+j+"_"+"collada.kml"
+            }
+            var Folder = doc.createElement("Folder");
+            var Folder_name = doc.createElement("name");
+            var Folder_name_textNode = doc.createTextNode(FolderObj.name);
+            Folder_name.appendChild(Folder_name_textNode);
+
+            var Folder_NetworkLink = doc.createElement("NetworkLink");
+            var NetworkLink_name = doc.createElement("name");
+            var NetworkLink_name_text = doc.createTextNode("Display as collada");
+            NetworkLink_name.appendChild(NetworkLink_name_text);
+            //Folder_NetworkLink.appendChild(NetworkLink_name_text);
+
+            var Region = doc.createElement("Region");
+
+            var LatLonAltBox = doc.createElement("LatLonAltBox");
+            var northNode = doc.createElement("north");
+            var southNode = doc.createElement("south");
+            var eastNode = doc.createElement("east");
+            var westNode = doc.createElement("west");
+            northNode.appendChild( doc.createTextNode(""+FolderObj.north) );
+            southNode.appendChild( doc.createTextNode(""+FolderObj.south) );
+            eastNode.appendChild( doc.createTextNode(""+FolderObj.east) );
+            westNode.appendChild( doc.createTextNode(""+FolderObj.west) );
+            LatLonAltBox.appendChild( doc.createTextNode("\n") );
+            LatLonAltBox.appendChild(northNode);
+            LatLonAltBox.appendChild( doc.createTextNode("\n") );
+            LatLonAltBox.appendChild(southNode);
+            LatLonAltBox.appendChild( doc.createTextNode("\n") );
+            LatLonAltBox.appendChild(eastNode);
+            LatLonAltBox.appendChild( doc.createTextNode("\n") );
+            LatLonAltBox.appendChild(westNode);
+            LatLonAltBox.appendChild( doc.createTextNode("\n") );
+
+            Region.appendChild( doc.createTextNode("\n") );
+            Region.appendChild(LatLonAltBox);
+            Region.appendChild( doc.createTextNode("\n") );
+
+            var Link = doc.createElement("Link");
+            var Link_href = doc.createElement("href");
+            Link_href.appendChild( doc.createTextNode(FolderObj.href) );
+            var Link_viewRefreshMode = doc.createElement("viewRefreshMode");
+            Link_viewRefreshMode.appendChild( doc.createTextNode("onRegion") );
+            var Link_viewFormat = doc.createElement("viewFormat");
+            Link.appendChild( doc.createTextNode("\n") );
+            Link.appendChild(Link_href);
+            Link.appendChild( doc.createTextNode("\n") );
+            Link.appendChild(Link_viewRefreshMode);
+            Link.appendChild( doc.createTextNode("\n") );
+            Link.appendChild(Link_viewFormat);
+            Link.appendChild( doc.createTextNode("\n") );
+
+            Folder_NetworkLink.appendChild( doc.createTextNode("\n") );
+            Folder_NetworkLink.appendChild(NetworkLink_name);
+            Folder_NetworkLink.appendChild( doc.createTextNode("\n") );
+            Folder_NetworkLink.appendChild(Region);
+            Folder_NetworkLink.appendChild( doc.createTextNode("\n") );
+            Folder_NetworkLink.appendChild(Link);
+            Folder_NetworkLink.appendChild( doc.createTextNode("\n") );
+
+            Folder.appendChild( doc.createTextNode("\n") );
+            Folder.appendChild(Folder_name);
+            Folder.appendChild( doc.createTextNode("\n") );
+            Folder.appendChild(Folder_NetworkLink);
+            Folder.appendChild( doc.createTextNode("\n") );
+
+            KMLDocument.appendChild(Folder);
+            KMLDocument.appendChild( doc.createTextNode("\n") );
+        }
+    }
+
+    fs.writeFile("./tmp/test.xml",XMLS.serializeToString(doc),"utf8", function(error){
+        if(error){
+            console.log(error);
+        }
+    })
+
+    return XMLS.serializeToString(doc);
 }
+
+exports.genKML = genKML;
