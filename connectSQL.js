@@ -34,16 +34,8 @@ client.connect(function(error, results){
     //select(client);
     //console.log("client.connect OK. \n");
     //genKML();
+    //queryTileKML(0, 0, client);
 
-    for(var i=0;i<config.tileConfig.tileCountX;i++)
-    {
-        for(var j=0;j<config.tileConfig.tileCountY; j++)
-        {
-            loadTileKMLFile("./Tiles/"+i+"/"+j+"/Layer_absolute_Tile_"+i+"_"+j+"_collada.kml",client, i, j);
-        }
-    }
-
-    //loadTileKMLFile("./Tiles/"+3+"/"+3+"/Layer_absolute_Tile_"+3+"_"+3+"_collada.kml",client, 3, 3);
 
 })
 
@@ -236,4 +228,90 @@ function loadTileKMLFile(filename, client, x, y)
     }
 }
 
+function queryTileKML(idx, idy, client_in)
+{
+    var basicStructureKML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n\
+        <kml:kml xmlns:kml="http://www.opengis.net/kml/2.2">\n\
+            <kml:Document>\n\
+                <kml:name>Layer_absolute_Tile_'+ idx +'_' + idy + '_collada</kml:name>\n\
+                <kml:open>false</kml:open>\n\
+                <kml:Placemark>\n\
+                    <kml:name>Tile border</kml:name>\n\
+                    <kml:LineString>\n\
+                    <kml:tessellate>true</kml:tessellate>\n\
+                    <kml:coordinates>13.387082868957075,52.5357364043519 13.388939572263524,52.5357364043519 13.388939572263524,52.53683301819875 13.387082868957075,52.53683301819875 13.387082868957075,52.5357364043519</kml:coordinates>\n\
+                    </kml:LineString>\n\
+                </kml:Placemark>\n\
+            </kml:Document>\n\
+        </kml:kml>'
+    var parser = new xmldom.DOMParser();
+    var XMLS = new xmldom.XMLSerializer();
+    var doc = parser.parseFromString(basicStructureKML, "application/xml");
+    var KMLDocument = doc.getElementsByTagName("kml:Document")[0];
+
+    client_in.query("select * from BuildingInfo where x="+idx + "and y=" + idy, function(error, results){
+        if(error){
+            console.log("query tile kml sql error: " + error.message);
+            client_in.end();
+            return null;
+        }
+        if(results.rowCount > 0){
+
+            for(var i=0; i<results.rowCount; i++){
+                //console.log(results.rows[i]);
+                var Placemark = doc.createElement("kml:Placemark");
+                Placemark.setAttribute("id", results.rows[i].id);
+
+                var Placemark_name = doc.createElement("kml:name");
+                Placemark_name.appendChild( doc.createTextNode(results.rows[i].name) );
+
+                var Placemark_Model = doc.createElement("kml:Model");
+                var Model_altitudeMode = doc.createElement("kml:altitudeMode");
+                Model_altitudeMode.appendChild( doc.createTextNode("absolute") );
+
+                var Model_Location = doc.createElement("kml:Location");
+                var Location_longitude = doc.createElement("kml:longitude");
+                Location_longitude.appendChild(doc.createTextNode(results.rows[i].longitude));
+                var Location_latitude = doc.createElement("kml:latitude");
+                Location_latitude.appendChild( doc.createTextNode(results.rows[i].latitude));
+                var Location_altitude = doc.createElement("kml:altitude");
+                Location_altitude.appendChild( doc.createTextNode(results.rows[i].altitude));
+                Model_Location.appendChild(Location_longitude);
+                Model_Location.appendChild(Location_latitude);
+                Model_Location.appendChild(Location_altitude);
+
+                var Model_Orientation = doc.createElement("kml:Orientation");
+                var Orientation_heading = doc.createElement("kml:heading");
+                Orientation_heading.appendChild( doc.createTextNode(results.rows[i].heading));
+                Model_Orientation.appendChild(Orientation_heading);
+
+                var Model_Link = doc.createElement("kml:Link");
+                var Link_href = doc.createElement("kml:href");
+                Link_href.appendChild( doc.createTextNode(results.rows[i].href) );
+                Model_Link.appendChild(Link_href);
+
+                Placemark_Model.appendChild(Model_altitudeMode);
+                Placemark_Model.appendChild(Model_Location);
+                Placemark_Model.appendChild(Model_Orientation);
+                Placemark_Model.appendChild(Model_Link);
+
+                Placemark.appendChild(Placemark_name);
+                Placemark.appendChild(Placemark_Model);
+
+                KMLDocument.appendChild(Placemark);
+            }
+
+
+
+            fs.writeFile("./tmp/writeTile.xml",XMLS.serializeToString(doc),"utf8", function(error){
+                if(error)
+                    console.log("write tile kml failed:" + error.message);
+            })
+
+            return XMLS.serializeToString(doc);
+        }
+    })
+}
+
 exports.genKML = genKML;
+exports.queryTileKML = queryTileKML;

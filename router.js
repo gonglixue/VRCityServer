@@ -2,13 +2,13 @@
  * Created by gonglixue on 2017/4/5.
  */
 var url = require("url");
-function route(handler, request, response)
+function route(handler, request, response, client)
 {
     var pathname = url.parse(request.url).pathname;
     console.log("route pathname: " + pathname);
     if(typeof(handler[pathname]) === "function")
     {
-        return handler[pathname](request, response);
+        return handler[pathname](request, response, client);
     }
     else{
         /*

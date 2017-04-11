@@ -28,7 +28,7 @@ function loadKML(request, response)
 }
 */
 
-function loadKML(request, response)
+function loadKML(request, response, client)
 {
     var doc = connectSQL.genKML();
     if(doc){
@@ -46,15 +46,28 @@ function loadKML(request, response)
 
 // method: GET
 // params: cityName idX idY
-function loadTileKML(request, response)
+function loadTileKML(request, response, client)
 {
-    console.log("request handler: loadTime");
+    console.log("request handler: loadTile");
     var myUrl = url.parse(request.url);
     var queryStr = myUrl.query;
     var params = querystring.parse(queryStr);
 
     var filePath = "./Tiles/" + params.idx + "/" + params.idy + "/" +
         "Layer_absolute_Tile_" + params.idx + "_" + params.idy + "_collada.kml";
+
+    /*
+    var doc = connectSQL.queryTileKML(params.idx, params.idy, client);
+    if(doc){
+        response.writeHead(200, {'Content-Type':'text/xml'});
+        response.write(doc);
+        response.end();
+    }else{
+        response.writeHead(500, {'Content-Type':'text/plain'});
+        response.write("error?");
+        response.end();
+    }*/
+
 
     fs.readFile(filePath,"utf8", function(error, data){
         if(error){
