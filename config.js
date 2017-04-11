@@ -5,8 +5,8 @@ var configItem = {
     address: '127.0.0.1:5432',
     username: 'postgres',
     password: 'gonglixue',
-    //db:'CityModelX',
-    db:'testdb'
+    db:'CityModelX',
+    //db:'testdb'
 };
 
 var pg_connectStr = "postgres://" + configItem.username + ":" +

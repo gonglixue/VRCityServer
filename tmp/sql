@@ -1,0 +1,6 @@
+select ST_AsGeoJSON(envelope,15,4) from cityobject limit 1
+select ST_AsText(ST_Transform(envelope),4326) from cityobject limit 1
+select st_astext(envelope) from cityobject as geotext limit 1;
+select st_astext(envelope) from cityobject as geotext limit 1;
+
+select ST_AsText(ST_Transform(envelope,4326))  from cityobject limit 1

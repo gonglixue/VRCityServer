@@ -31,9 +31,20 @@ client.connect(function(error, results){
         client.end();
         return;
     }
-    select(client);
+    //select(client);
     //console.log("client.connect OK. \n");
-    genKML();
+    //genKML();
+
+    for(var i=0;i<config.tileConfig.tileCountX;i++)
+    {
+        for(var j=0;j<config.tileConfig.tileCountY; j++)
+        {
+            loadTileKMLFile("./Tiles/"+i+"/"+j+"/Layer_absolute_Tile_"+i+"_"+j+"_collada.kml",client, i, j);
+        }
+    }
+
+    //loadTileKMLFile("./Tiles/"+3+"/"+3+"/Layer_absolute_Tile_"+3+"_"+3+"_collada.kml",client, 3, 3);
+
 })
 
 // 构造Layer.KML
@@ -163,6 +174,66 @@ function genKML(){
     })
 
     return XMLS.serializeToString(doc);
+}
+
+function loadTileKMLFile(filename, client, x, y)
+{
+    fs.readFile(filename, "utf8", function(error,data){
+        if(error){
+            console.log("read tile kml file failed:"+ filename);
+
+            return;
+        }
+        else{
+            var parser = new xmldom.DOMParser();
+            var XMLS = new xmldom.XMLSerializer();
+            var doc = parser.parseFromString(data, "application/xml");
+            //console.log(XMLS.serializeToString(doc));
+
+            // 选择Location节点
+            var PlaceMarksList = doc.getElementsByTagName("kml:Placemark");
+            var length = PlaceMarksList.length;
+            if(length <= 1)
+            {
+                console.log("empty tile " + x + "," + y);
+                return;
+            }
+
+            for(var i=1; i<length; i++){
+                var place = PlaceMarksList[i];
+
+                var id = place.getAttribute("id");
+
+                var name = place.getElementsByTagName("kml:name")[0].childNodes[0].nodeValue;
+                var longitude = parseFloat( place.getElementsByTagName("kml:longitude")[0].childNodes[0].nodeValue );
+                var latitude = parseFloat( place.getElementsByTagName("kml:latitude")[0].childNodes[0].nodeValue );
+                var altitude = parseFloat( place.getElementsByTagName("kml:altitude")[0].childNodes[0].nodeValue );
+                var heading = parseFloat( place.getElementsByTagName("kml:heading")[0].childNodes[0].nodeValue );
+                var href = place.getElementsByTagName("kml:href")[0].childNodes[0].nodeValue;
+
+                InsertBuildingInfo(id, name, longitude, latitude, altitude, heading, href, x, y);
+            }
+
+
+        }
+    })
+
+
+    function InsertBuildingInfo(id, name, longitude, latitude, altitude, heading, href, x, y)
+    {
+        var sqlString = "insert into BuildingInfo values('"
+            + id + "','" + name + "'," + longitude + "," + latitude + "," + altitude + "," + heading + ",'"
+            + href + "'," + x + "," + y + ")";
+        console.log(sqlString);
+        client.query(sqlString, function(error, results){
+            if(error){
+                console.log("select error:"+error.message + "//" + sqlString);
+                client.end();
+                return;
+            }
+
+        })
+    }
 }
 
 exports.genKML = genKML;
