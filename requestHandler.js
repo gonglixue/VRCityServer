@@ -29,14 +29,14 @@ function loadKML(request, response, client)
 // params: cityName idX idY
 function loadTileKML(request, response, client)
 {
-    console.log("request handler: loadTile");
+    //console.log("request handler: loadTile");
     var myUrl = url.parse(request.url);
     var queryStr = myUrl.query;
     var params = querystring.parse(queryStr);
 
     var filePath = "./Tiles/" + params.idx + "/" + params.idy + "/" +
         "Layer_absolute_Tile_" + params.idx + "_" + params.idy + "_collada.kml";
-    
+
     connectSQL.queryTileKML(params.idx, params.idy, client, response); //在SQL操作回掉中做出HTTP 响应
 
     /*

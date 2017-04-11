@@ -310,7 +310,13 @@ function queryTileKML(idx, idy, client_in, response)
                 if(error)
                     console.log("write tile kml failed:" + error.message);
             })*/
-            response.writeHead(500, {'Content-Type':'text.xml'});
+            response.writeHead(200, {'Content-Type':'text/xml'});
+            response.write(XMLS.serializeToString(doc));
+            response.end();
+        }
+        else{
+            console.log("request a empty tile KML");
+            response.writeHead(200, {'Content-Type':'text/xml'});
             response.write(XMLS.serializeToString(doc));
             response.end();
         }

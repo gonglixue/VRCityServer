@@ -5,7 +5,7 @@ var url = require("url");
 function route(handler, request, response, client)
 {
     var pathname = url.parse(request.url).pathname;
-    console.log("route pathname: " + pathname);
+    //console.log("route pathname: " + pathname);
     if(typeof(handler[pathname]) === "function")
     {
         return handler[pathname](request, response, client);
