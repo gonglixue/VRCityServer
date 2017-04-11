@@ -228,7 +228,7 @@ function loadTileKMLFile(filename, client, x, y)
     }
 }
 
-function queryTileKML(idx, idy, client_in)
+function queryTileKML(idx, idy, client_in, response)
 {
     var basicStructureKML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n\
         <kml:kml xmlns:kml="http://www.opengis.net/kml/2.2">\n\
@@ -253,7 +253,10 @@ function queryTileKML(idx, idy, client_in)
         if(error){
             console.log("query tile kml sql error: " + error.message);
             client_in.end();
-            return null;
+            response.writeHead(500, {'Content-Type':'text/plain'});
+            response.write("tile query error.");
+            response.end();
+            return;
         }
         if(results.rowCount > 0){
 
@@ -301,14 +304,15 @@ function queryTileKML(idx, idy, client_in)
                 KMLDocument.appendChild(Placemark);
             }
 
-
-
+            //console.log(XMLS.serializeToString(doc));
+            /*
             fs.writeFile("./tmp/writeTile.xml",XMLS.serializeToString(doc),"utf8", function(error){
                 if(error)
                     console.log("write tile kml failed:" + error.message);
-            })
-
-            return XMLS.serializeToString(doc);
+            })*/
+            response.writeHead(500, {'Content-Type':'text.xml'});
+            response.write(XMLS.serializeToString(doc));
+            response.end();
         }
     })
 }

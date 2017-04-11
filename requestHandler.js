@@ -8,25 +8,6 @@ var connectSQL = require("./connectSQL");
 
 // method: GET
 // params: latitude, longitude
-/*
-function loadKML(request, response)
-{
-    console.log("request handler: loadKML");
-    fs.readFile("./tmp/Layer2.kml","utf8", function(error, data){
-        if(error)
-        {
-            response.writeHead(500, {'Content-Type':'text/plain'});
-            response.write(error + "\n");
-            response.end();
-        }
-        else{
-            response.writeHead(200, {'Content-Type':'text/xml'});
-            response.write(data);
-            response.end();
-        }
-    })
-}
-*/
 
 function loadKML(request, response, client)
 {
@@ -55,20 +36,10 @@ function loadTileKML(request, response, client)
 
     var filePath = "./Tiles/" + params.idx + "/" + params.idy + "/" +
         "Layer_absolute_Tile_" + params.idx + "_" + params.idy + "_collada.kml";
+    
+    connectSQL.queryTileKML(params.idx, params.idy, client, response); //在SQL操作回掉中做出HTTP 响应
 
     /*
-    var doc = connectSQL.queryTileKML(params.idx, params.idy, client);
-    if(doc){
-        response.writeHead(200, {'Content-Type':'text/xml'});
-        response.write(doc);
-        response.end();
-    }else{
-        response.writeHead(500, {'Content-Type':'text/plain'});
-        response.write("error?");
-        response.end();
-    }*/
-
-
     fs.readFile(filePath,"utf8", function(error, data){
         if(error){
             response.writeHead(500, {'Content-Type':'text/plain'});
@@ -80,6 +51,7 @@ function loadTileKML(request, response, client)
             response.end();
         }
     })
+    */
 
 }
 
