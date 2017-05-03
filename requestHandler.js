@@ -107,7 +107,7 @@ function requestClassData(request, response)
     console.log("request class-data of: " + month +"month in " + year);
 
     var classDataJson = {};
-
+    classDataJson["sunny"] = 
     response.writeHead(200, {'Content-Type':'application/json'});
     response.write(classDataJson);
     response.end();
