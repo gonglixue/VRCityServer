@@ -94,7 +94,27 @@ function downloadTextureFile(request, response)
         }
     })
 }
+
+// classData?month=j&year=2016
+function requestClassData(request, response)
+{
+    var myUrl = url.parse(request.url);
+    var queryStr = myUrl.query;
+    var params = querystring.parse(queryStr);
+
+    var month = parseInt(params.month);
+    var year = parseInt(params.year);
+    console.log("request class-data of: " + month +"month in " + year);
+
+    var classDataJson = {};
+
+    response.writeHead(200, {'Content-Type':'application/json'});
+    response.write(classDataJson);
+    response.end();
+}
+
 exports.loadKML = loadKML;
 exports.loadTileKML = loadTileKML;
 exports.downloadFile = downloadFile;
 exports.downloadTextureFile = downloadTextureFile;
+exports.requestClassData = requestClassData;
