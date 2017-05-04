@@ -95,18 +95,19 @@ function downloadTextureFile(request, response)
     })
 }
 
+// 请求天气数据
 // classData?month=j&year=2016
 function requestClassData(request, response, client)
 {
     var myUrl = url.parse(request.url);
     var queryStr = myUrl.query;
-    var params = querystring.parse(queryStr);
+    var params = querystring.parse(queryStr);  // 请求参数
 
     var month = parseInt(params.month);
     var year = parseInt(params.year);
-    console.log("request class-data of: " + month +"month in " + year);
+    console.log("request class-data of: " + month +" month in " + year);
 
-    connectSQL.queryWeatherClassData(month, year, client, response);
+    connectSQL.queryWeatherClassData(month, year, client, response);  // 从数据库中查询天气数据
 }
 
 exports.loadKML = loadKML;
