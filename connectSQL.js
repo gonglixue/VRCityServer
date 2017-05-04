@@ -7,7 +7,6 @@ var xmldom = require('xmldom');
 var fs = require("fs");
 
 var conString = config.pg_connectStr;
-//var client = new pg.Client(conString);
 
 function select(client){
     client.query("select * from job;", function(error, results){
@@ -22,21 +21,6 @@ function select(client){
         }
     })
 }
-
-// client.connect(function(error, results){
-//     if(error){
-//         console.log('client connection error');
-//         console.log(error.message);
-//         client.end();
-//         return;
-//     }
-//     //select(client);
-//     //console.log("client.connect OK. \n");
-//     //genKML();
-//     //queryTileKML(0, 0, client);
-//
-//
-// })
 
 // 构造Layer.KML
 function genKML(){
