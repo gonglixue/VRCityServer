@@ -5,10 +5,9 @@ var pg = require('pg');
 var config = require('./config');
 var xmldom = require('xmldom');
 var fs = require("fs");
-//var libxml = require("libxmljs");
 
 var conString = config.pg_connectStr;
-var client = new pg.Client(conString);
+//var client = new pg.Client(conString);
 
 function select(client){
     client.query("select * from job;", function(error, results){
@@ -24,20 +23,20 @@ function select(client){
     })
 }
 
-client.connect(function(error, results){
-    if(error){
-        console.log('client connection error');
-        console.log(error.message);
-        client.end();
-        return;
-    }
-    //select(client);
-    //console.log("client.connect OK. \n");
-    //genKML();
-    //queryTileKML(0, 0, client);
-
-
-})
+// client.connect(function(error, results){
+//     if(error){
+//         console.log('client connection error');
+//         console.log(error.message);
+//         client.end();
+//         return;
+//     }
+//     //select(client);
+//     //console.log("client.connect OK. \n");
+//     //genKML();
+//     //queryTileKML(0, 0, client);
+//
+//
+// })
 
 // 构造Layer.KML
 function genKML(){
@@ -304,12 +303,6 @@ function queryTileKML(idx, idy, client_in, response)
                 KMLDocument.appendChild(Placemark);
             }
 
-            //console.log(XMLS.serializeToString(doc));
-            /*
-            fs.writeFile("./tmp/writeTile.xml",XMLS.serializeToString(doc),"utf8", function(error){
-                if(error)
-                    console.log("write tile kml failed:" + error.message);
-            })*/
             response.writeHead(200, {'Content-Type':'text/xml'});
             response.write(XMLS.serializeToString(doc));
             response.end();
@@ -323,5 +316,28 @@ function queryTileKML(idx, idy, client_in, response)
     })
 }
 
+function queryWeatherClassData(month, year, client, response)
+{
+    client.query("select * from weather where month=" + month + " and year=" + year, function(error, results)
+    {
+        if(error){
+            console.log("query weather class data error: " + error.message);
+            client.end();
+            response.writeHead(500, {'Content-Type':'text/plain'});
+            response.write("query weather class data failed");
+            response.end();
+            return;
+        }
+        if(results.rowCount > 0)
+        {
+            response.writeHead(200, {'Content-Type':'application/json'});
+            response.write(JSON.stringify(results.rows[0]))
+            response.end();
+            return;
+        }
+    })
+}
+
 exports.genKML = genKML;
 exports.queryTileKML = queryTileKML;
+exports.queryWeatherClassData = queryWeatherClassData;

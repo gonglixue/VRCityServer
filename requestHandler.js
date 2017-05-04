@@ -96,7 +96,7 @@ function downloadTextureFile(request, response)
 }
 
 // classData?month=j&year=2016
-function requestClassData(request, response)
+function requestClassData(request, response, client)
 {
     var myUrl = url.parse(request.url);
     var queryStr = myUrl.query;
@@ -106,11 +106,7 @@ function requestClassData(request, response)
     var year = parseInt(params.year);
     console.log("request class-data of: " + month +"month in " + year);
 
-    var classDataJson = {};
-    classDataJson["sunny"] = 
-    response.writeHead(200, {'Content-Type':'application/json'});
-    response.write(classDataJson);
-    response.end();
+    connectSQL.queryWeatherClassData(month, year, client, response);
 }
 
 exports.loadKML = loadKML;

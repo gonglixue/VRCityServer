@@ -14,7 +14,7 @@ handler["/loadKML"] = requestHandler.loadKML;
 handler["/loadTileKML"] = requestHandler.loadTileKML
 handler["file"] = requestHandler.downloadFile;
 handler["texture"] = requestHandler.downloadTextureFile;
-handler["classData"] = requestHandler.requestClassData;
+handler["/classData"] = requestHandler.requestClassData;
 
 // 连接数据库
 var client = new pg.Client(config.pg_connectStr);
